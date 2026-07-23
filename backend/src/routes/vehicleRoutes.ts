@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, list, search, update, remove } from "../controllers/vehicleController";
+import { create, list, search, update, remove, purchase, restock } from "../controllers/vehicleController";
 import { protect, adminOnly } from "../middleware/authMiddleware";
 
 const router = Router();
@@ -14,5 +14,7 @@ router.get("/", protect, list);
 router.get("/search", protect, search);
 router.put("/:id", protect, update);
 router.delete("/:id", protect, adminOnly, remove);
+router.post("/:id/purchase", protect, purchase);
+router.post("/:id/restock", protect, adminOnly, restock);
 
 export default router;

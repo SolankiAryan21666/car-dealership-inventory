@@ -81,3 +81,37 @@ export const deleteVehicle = async (id: string): Promise<void> => {
     throw new AppError("Vehicle not found", 404);
   }
 };
+
+export const purchaseVehicle = async (id: string) => {
+  const vehicle = await Vehicle.findById(id);
+
+  if (!vehicle) {
+    throw new AppError("Vehicle not found", 404);
+  }
+
+  if (vehicle.quantity <= 0) {
+    throw new AppError("Vehicle is out of stock", 400);
+  }
+
+  vehicle.quantity -= 1;
+  await vehicle.save();
+
+  return vehicle;
+};
+
+export const restockVehicle = async (id: string, quantity: number) => {
+  if (!quantity || quantity <= 0) {
+    throw new AppError("Restock quantity must be a positive number", 400);
+  }
+
+  const vehicle = await Vehicle.findById(id);
+
+  if (!vehicle) {
+    throw new AppError("Vehicle not found", 404);
+  }
+
+  vehicle.quantity += quantity;
+  await vehicle.save();
+
+  return vehicle;
+};

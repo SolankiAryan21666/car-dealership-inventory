@@ -5,6 +5,8 @@ import {
   searchVehicles,
   updateVehicle,
   deleteVehicle,
+  purchaseVehicle,
+  restockVehicle,
 } from "../services/vehicleService";
 import { AppError } from "../utils/AppError";
 
@@ -69,6 +71,32 @@ export const search = async (req: Request, res: Response): Promise<void> => {
     });
     res.status(200).json(vehicles);
   } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const purchase = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const vehicle = await purchaseVehicle(req.params.id);
+    res.status(200).json(vehicle);
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({ message: error.message });
+      return;
+    }
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const restock = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const vehicle = await restockVehicle(req.params.id, req.body.quantity);
+    res.status(200).json(vehicle);
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.statusCode).json({ message: error.message });
+      return;
+    }
     res.status(500).json({ message: "Something went wrong" });
   }
 };
