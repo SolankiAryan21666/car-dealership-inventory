@@ -1,5 +1,13 @@
 import { Router } from "express";
-import { create, list, search, update, remove, purchase, restock } from "../controllers/vehicleController";
+import {
+  create,
+  list,
+  search,
+  update,
+  remove,
+  purchase,
+  restock,
+} from "../controllers/vehicleController";
 import { protect, adminOnly } from "../middleware/authMiddleware";
 
 const router = Router();
