@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { create, list, search } from "../controllers/vehicleController";
-import { protect } from "../middleware/authMiddleware";
+import { create, list, search, update, remove } from "../controllers/vehicleController";
+import { protect, adminOnly } from "../middleware/authMiddleware";
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.get("/", protect, list);
 // IMPORTANT: /search must stay registered before any future GET /:id route,
 // otherwise Express would treat "search" as an :id value and never reach this handler.
 router.get("/search", protect, search);
+router.put("/:id", protect, update);
+router.delete("/:id", protect, adminOnly, remove);
 
 export default router;

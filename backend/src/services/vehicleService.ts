@@ -52,3 +52,32 @@ export const searchVehicles = async (filters: SearchFilters): Promise<IVehicle[]
 
   return Vehicle.find(query).sort({ createdAt: -1 });
 };
+
+interface UpdateVehicleInput {
+  make?: string;
+  model?: string;
+  category?: string;
+  price?: number;
+  quantity?: number;
+}
+
+export const updateVehicle = async (id: string, updates: UpdateVehicleInput) => {
+  const vehicle = await Vehicle.findByIdAndUpdate(id, updates, {
+    new: true, // return the document AFTER the update, not before
+    runValidators: true, // re-apply schema validation (e.g. min price) on update
+  });
+
+  if (!vehicle) {
+    throw new AppError("Vehicle not found", 404);
+  }
+
+  return vehicle;
+};
+
+export const deleteVehicle = async (id: string): Promise<void> => {
+  const vehicle = await Vehicle.findByIdAndDelete(id);
+
+  if (!vehicle) {
+    throw new AppError("Vehicle not found", 404);
+  }
+};
