@@ -25,3 +25,30 @@ export const createVehicle = async (input: CreateVehicleInput) => {
 export const getAllVehicles = async (): Promise<IVehicle[]> => {
   return Vehicle.find().sort({ createdAt: -1 });
 };
+
+interface SearchFilters {
+  make?: string;
+  model?: string;
+  category?: string;
+  minPrice?: string;
+  maxPrice?: string;
+}
+
+export const searchVehicles = async (filters: SearchFilters): Promise<IVehicle[]> => {
+  const query: Record<string, unknown> = {};
+
+  // Case-insensitive exact match on text fields, since "toyota" and "Toyota"
+  // should return the same results for a customer typing casually.
+  if (filters.make) query.make = new RegExp(`^${filters.make}$`, "i");
+  if (filters.model) query.model = new RegExp(`^${filters.model}$`, "i");
+  if (filters.category) query.category = new RegExp(`^${filters.category}$`, "i");
+
+  if (filters.minPrice || filters.maxPrice) {
+    const priceRange: Record<string, number> = {};
+    if (filters.minPrice) priceRange.$gte = Number(filters.minPrice);
+    if (filters.maxPrice) priceRange.$lte = Number(filters.maxPrice);
+    query.price = priceRange;
+  }
+
+  return Vehicle.find(query).sort({ createdAt: -1 });
+};

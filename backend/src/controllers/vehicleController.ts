@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createVehicle, getAllVehicles } from "../services/vehicleService";
+import { createVehicle, getAllVehicles, searchVehicles } from "../services/vehicleService";
 import { AppError } from "../utils/AppError";
 
 export const create = async (req: Request, res: Response): Promise<void> => {
@@ -19,6 +19,22 @@ export const create = async (req: Request, res: Response): Promise<void> => {
 export const list = async (_req: Request, res: Response): Promise<void> => {
   try {
     const vehicles = await getAllVehicles();
+    res.status(200).json(vehicles);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const search = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { make, model, category, minPrice, maxPrice } = req.query;
+    const vehicles = await searchVehicles({
+      make: make as string,
+      model: model as string,
+      category: category as string,
+      minPrice: minPrice as string,
+      maxPrice: maxPrice as string,
+    });
     res.status(200).json(vehicles);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
