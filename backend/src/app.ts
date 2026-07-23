@@ -1,12 +1,13 @@
 import express, { Application } from "express";
 import cors from "cors";
+import authRoutes from "./routes/authRoutes";
 
 const app: Application = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Route mounting will grow as we build each resource.
-// Nothing mounted yet — auth routes come first via TDD.
+app.use("/api/auth", authRoutes);
+// More route groups (vehicles, inventory) get mounted here as we build them.
 
 export default app;
