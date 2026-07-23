@@ -19,6 +19,11 @@ interface AuthResult {
 
 const SALT_ROUNDS = 10;
 
+interface LoginInput {
+  email: string;
+  password: string;
+}
+
 export const registerUser = async (input: RegisterInput): Promise<AuthResult> => {
   const { email, password } = input;
 
@@ -39,6 +44,38 @@ export const registerUser = async (input: RegisterInput): Promise<AuthResult> =>
     passwordHash,
     role: "customer", // registration always creates a customer; admins are seeded/promoted separately
   });
+
+  const token = generateToken({ userId: user.id, role: user.role });
+
+  return {
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
+  };
+};
+
+export const loginUser = async (input: LoginInput): Promise<AuthResult> => {
+  const { email, password } = input;
+
+  if (!email || !password) {
+    throw new AppError("Email and password are required", 400);
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase() });
+
+  // Same 401 whether the email doesn't exist or the password is wrong —
+  // never reveal which one failed, to prevent attackers enumerating valid emails.
+  if (!user) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordCorrect) {
+    throw new AppError("Invalid email or password", 401);
+  }
 
   const token = generateToken({ userId: user.id, role: user.role });
 
