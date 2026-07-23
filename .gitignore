@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment secrets — never commit real .env
+.env
+
+# Build output
+dist/
+build/
+
+# Test coverage reports
+coverage/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
